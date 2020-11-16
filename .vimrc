@@ -6,10 +6,19 @@ let g:netrw_altv = 1
 set tabstop=2
 set expandtab	 
 set shiftwidth=2
+set encoding=UTF-8
+
+
+set guifont="Fira Code:h13"
 
 call plug#begin('~/.vim/plugged')
 Plug 'itchyny/lightline.vim'
-Plug 'preservim/nerdtree'
+
+
+" NERDTree
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight', {'on': 'NERDTreeToggle'}
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'puremourning/vimspector'
@@ -19,7 +28,17 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'mattn/emmet-vim'
 Plug 'dense-analysis/ale'
 Plug 'dracula/vim', { 'as': 'dracula' }
+
+" Interface
+
+" Visual
+Plug 'ryanoasis/vim-devicons'
+
+" Utilities
+
+" Langs
 Plug 'pangloss/vim-javascript'
+
 call plug#end()
 
 colorscheme dracula
@@ -75,6 +94,8 @@ nmap <F5> <Plug>(lcn-menu)
 nmap <silent>K <Plug>(lcn-hover)
 nmap <silent> gd <Plug>(lcn-definition)
 nmap <silent> <F2> <Plug>(lcn-rename)
+
+let mapleader = ","
 
 " -- YANKING --
 
