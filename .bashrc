@@ -122,3 +122,6 @@ export NVM_DIR="$HOME/.nvm"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 alias config='/usr/bin/git --git-dir=/home/trickstival/.cfg/ --work-tree=/home/trickstival'
+
+export BAT_THEME="gruvbox"
+

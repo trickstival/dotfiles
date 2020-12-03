@@ -15,11 +15,14 @@ autocmd BufEnter * call system("tmux rename-window " . expand("%:t"))
 autocmd VimLeave * call system("tmux rename-window bash")
 autocmd BufEnter * let &titlestring = ' ' . expand("%:t")                                                                 
 set title
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 
 "Plug 'eemed/sitruuna.vim'
 Plug 'morhetz/gruvbox'
+Plug 'gosukiwi/vim-atom-dark'
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'liuchengxu/space-vim-dark'
 Plug 'cseelus/vim-colors-lucid'
@@ -45,10 +48,11 @@ Plug 'natebosch/vim-lsc-dart'
 Plug 'ap/vim-css-color', {'for': ['css', 'scss']}
 Plug 'jparise/vim-graphql'
 Plug 'evanleck/vim-svelte'
-
+Plug 'metakirby5/codi.vim'
+Plug 'szw/vim-maximizer'
+Plug 'puremourning/vimspector'
 
 " Other
-"Plug 'easymotion/vim-easymotion'
 Plug 'ncm2/ncm2'
 Plug 'roxma/nvim-yarp'
 Plug 'ncm2/ncm2-bufword'
@@ -58,10 +62,8 @@ Plug 'sheerun/vim-polyglot'
 Plug 'jiangmiao/auto-pairs'
 Plug 'dense-analysis/ale'
 Plug 'posva/vim-vue'
-" Plug 'mxw/vim-jsx'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
-Plug 'zivyangll/git-blame.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'xolox/vim-session'
@@ -70,6 +72,7 @@ Plug 'xolox/vim-misc'
 " FZF
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
 
 " CoC
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -110,6 +113,9 @@ endfunction
 let g:palenight_terminal_italics=1
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
+
 let g:ale_fixers = {}
 let g:ale_fixers.javascript = ['prettier', 'eslint']
 let g:ale_fix_on_save = 1
@@ -143,12 +149,27 @@ let g:go_auto_type_info = 1
 let g:go_fmt_autosave = 1
 
 let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-let g:fzf_layout = { 'down': '~80%' }
+let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 } }
+let $FZF_DEFAULT_OPTS='--reverse'
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, '--vimgrep --smart-case', <bang>0)
 " command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
 "# Mappings
 let mapleader=","
+
+"# Vimspector bindings
+nnoremap <leader>dd :call vimspector#Launch()<CR>
+nnoremap <leader>m :MaximizerToggle!<CR>
 
 "# Move up or down 
 nnoremap <A-j> :m .+1<CR>==
@@ -159,8 +180,11 @@ vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
 
-"# Git blame
-nnoremap <Leader>gb :<C-u>call gitblame#echo()<CR>
+"# Fugitive bindings
+nmap <leader>gs :G<CR>
+nmap <leader>gl :diffget //3<CR>
+nmap <leader>gh :diffget //2<CR>
+nnoremap <leader>gb :GBranches<CR>
 
 set clipboard+=unnamedplus
 
@@ -173,7 +197,8 @@ nnoremap <leader>sv :source ~/.config/nvim/init.vim<cr>
 noremap <leader>f :Fixmyjs<cr>
 noremap <leader>p :Files<cr>
 noremap <leader>b :Buffers<cr>
-noremap <leader><S-p> :Rg<cr>
+noremap <leader>h :History<cr>
+noremap <leader><S-p> :RG<cr>
 
 " Use <c-space> to trigger completion
 inoremap <silent><expr> <c-space> coc#refresh()
@@ -236,26 +261,8 @@ endif
 
 "# Vim configs
 
-"set background=dark
 set termguicolors
-"set t_Co=256
-"set t_ut=
-"colorscheme palenight 
-"colorscheme gruvbox
-
-"colorscheme lucid
-
-hi Normal     ctermbg=NONE guibg=NONE
-hi LineNr     ctermbg=NONE guibg=NONE
-hi SignColumn ctermbg=NONE guibg=NONE
-hi htmlArg gui=italic
-hi Comment gui=italic
-hi Type    gui=italic
-hi htmlArg cterm=italic
-hi Comment cterm=italic
-hi Type    cterm=italic
-hi Special  cterm=italic
-hi ErrorMsg  cterm=italic
+colorscheme gruvbox
 
 autocmd BufEnter * call ncm2#enable_for_buffer()
 command! CleanReg for i in range(34,122) | silent! call setreg(nr2char(i), []) | endfor
@@ -264,7 +271,16 @@ set nocompatible
 set ttyfast
 set lazyredraw
 
-set norelativenumber
+set number
+:set number relativenumber
+
+:augroup numbertoggle
+:  autocmd!
+:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
+:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
+:augroup END
+
+
 set title
 set mouse=a
 set clipboard+=unnamedplus
@@ -291,7 +307,6 @@ set listchars=eol:¬,tab:▸-
 set cursorline
 set nowrap
 set hidden
-set number
 set inccommand=split
 set foldmethod=indent " Use decent folding
 set foldlevelstart=50 " Files open expanded
@@ -300,3 +315,4 @@ set updatetime=300
 set t_ZH=^[[3m
 set t_ZR=^[[23m
 set noshowmode
+set background=dark
