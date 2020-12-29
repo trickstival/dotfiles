@@ -62,7 +62,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'jiangmiao/auto-pairs'
 Plug 'dense-analysis/ale'
 Plug 'posva/vim-vue'
-Plug 'mattn/emmet-vim'
+" Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'editorconfig/editorconfig-vim'
@@ -116,9 +116,12 @@ let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 " let g:airline#extensions#tabline#enabled = 1
 " let g:airline#parts#ffenc#skip_expected_string='utf-8[unix]'
 
-let g:ale_fixers = {}
-let g:ale_fixers.javascript = ['prettier', 'eslint']
 let g:ale_fix_on_save = 1
+
+let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
+let g:ale_fixers = {'vue': ['eslint']}
+let g:ale_fixers.javascript = ['prettier', 'eslint']
+let g:ale_linters = {'vue': ['eslint', 'vls']}
 
 " Dart configs
 let g:lsc_auto_map = v:true
@@ -223,8 +226,6 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 nmap <leader>rn <Plug>(coc-rename)
 
 " Emmet
-let g:user_emmet_expandabbr_key='<Tab>'
-imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 let g:user_emmet_settings = {
   \  'javascript' : {
   \      'extends' : 'jsx',
