@@ -33,3 +33,4 @@ set noshowmode
 set hlsearch
 let g:autoclosepairs_del = "`"
 set updatetime=50
+let g:session_autosave='no'

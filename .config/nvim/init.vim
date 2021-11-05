@@ -19,7 +19,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'colepeters/spacemacs-theme.vim'
 
 
@@ -28,6 +28,7 @@ Plug 'markonm/traces.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'ryanoasis/vim-devicons'
+Plug 'folke/trouble.nvim'
 
 " NERDTree
 Plug 'scrooloose/nerdtree'
@@ -55,6 +56,7 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'xolox/vim-session'
 Plug 'xolox/vim-misc'
 Plug 'szw/vim-maximizer'
+Plug 'tpope/vim-surround'
 
 " Plebvim lsp Plugins
 Plug 'neovim/nvim-lspconfig'
@@ -69,99 +71,13 @@ Plug 'nvim-treesitter/playground'
 
 call plug#end()
 
-lua require'nvim-treesitter.configs'.setup { highlight = { enable = true } }
 
-" Install Language Server Clients
-lua << EOF
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
--- Enable the following language servers
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'dockerls', 'vuels', 'cssls' }
-for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup {
-    -- You will probably want to add a custom on_attach here to locally map keybinds to buffers with an active client
-    -- on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noinsert'
-
--- Compe setup
-require('compe').setup {
-  source = {
-    path = true,
-    nvim_lsp = true,
-    luasnip = true,
-    buffer = true,
-    calc = false,
-    nvim_lua = false,
-    vsnip = false,
-    ultisnips = false,
-  },
-}
-
--- Utility functions for compe and luasnip
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-  local col = vim.fn.col '.' - 1
-  if col == 0 or vim.fn.getline('.'):sub(col, col):match '%s' then
-    return true
-  else
-    return false
-  end
-end
-
--- Use (s-)tab to:
---- move to prev/next item in completion menu
---- jump to prev/next snippet's placeholder
-local luasnip = require 'luasnip'
-
-_G.tab_complete = function()
-  if vim.fn.pumvisible() == 1 then
-    return t '<C-n>'
-  elseif luasnip.expand_or_jumpable() then
-    return t '<Plug>luasnip-expand-or-jump'
-  elseif check_back_space() then
-    return t '<Tab>'
-  else
-    return vim.fn['compe#complete']()
-  end
-end
-
-_G.s_tab_complete = function()
-  if vim.fn.pumvisible() == 1 then
-    return t '<C-p>'
-  elseif luasnip.jumpable(-1) then
-    return t '<Plug>luasnip-jump-prev'
-  else
-    return t '<S-Tab>'
-  end
-end
-
--- Map tab to the above tab complete functions
-vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-
--- Map compe confirm and complete functions
-vim.api.nvim_set_keymap('i', '<cr>', 'compe#confirm("<cr>")', { expr = true })
-vim.api.nvim_set_keymap('i', '<c-space>', 'compe#complete()', { expr = true })
-
-
-EOF
 set completeopt=menuone,noselect
 
 " NOTE: Order is important. You can't lazy loading lexima.vim.
 let g:lexima_no_default_rules = v:true
 call lexima#set_default_rules()
-inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <C-x> compe#complete()
 inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
@@ -189,7 +105,7 @@ function MyNerdToggle()
 endfunction
 
 "ALE
-let g:ale_fix_on_save = 1
+let g:ale_fix_on_save = 0
 
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 let g:ale_fixers = {'vue': ['eslint']}
