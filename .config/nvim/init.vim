@@ -32,7 +32,6 @@ Plug 'folke/trouble.nvim'
 
 " NERDTree
 Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/nerdcommenter'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight', {'on': 'NERDTreeToggle'}
 
 " Languages
@@ -43,6 +42,9 @@ Plug 'puremourning/vimspector'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'hrsh7th/nvim-compe'
 Plug 'L3MON4D3/LuaSnip'
+Plug 'tyru/caw.vim'
+Plug 'Shougo/context_filetype.vim'
+
 
 " Other
 Plug 'sheerun/vim-polyglot'
@@ -60,7 +62,6 @@ Plug 'tpope/vim-surround'
 
 " Plebvim lsp Plugins
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
 Plug 'tjdevries/nlua.nvim'
 Plug 'tjdevries/lsp_extensions.nvim'
 
@@ -105,7 +106,7 @@ function MyNerdToggle()
 endfunction
 
 "ALE
-let g:ale_fix_on_save = 0
+let g:ale_fix_on_save = 1
 
 let g:ale_linter_aliases = {'vue': ['vue', 'javascript']}
 let g:ale_fixers = {'vue': ['eslint']}
@@ -132,26 +133,12 @@ nnoremap <leader>a :e #<CR>
 nnoremap <leader>n :call MyNerdToggle()<CR>
 nnoremap <leader>sv :source ~/.config/nvim/init.vim<cr>
 
+" Macro in multiple lines: commend, uncomment and generic macro
+vnoremap <leader>qc :normal s/^\(\s*\)/\1\/\/ <cr>
+vnoremap <leader>qu :normal s/^\(\s*\)\/\/\s/\1<cr>
+vnoremap <leader>qq :normal @q<cr>
+
 " Comment in vue files
-let g:ft = ''
-function! NERDCommenter_before()
-  if &ft == 'vue'
-    let g:ft = 'vue'
-    let stack = synstack(line('.'), col('.'))
-    if len(stack) > 0
-      let syn = synIDattr((stack)[0], 'name')
-      if len(syn) > 0
-        exe 'setf ' . substitute(tolower(syn), '^vue_', '', '')
-      endif
-    endif
-  endif
-endfunction
-function! NERDCommenter_after()
-  if g:ft == 'vue'
-    setf vue
-    let g:ft = ''
-  endif
-endfunction
 let NERDSpaceDelims=1
 
 if (has('nvim'))
