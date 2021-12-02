@@ -52,7 +52,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 -- Enable the following language servers
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'tsserver', 'dockerls', 'vuels', 'cssls', 'jsonls' }
+local servers = { 'clangd', 'rust_analyzer', 'pyright', 'dockerls', 'cssls', 'jsonls' }
 for _, lsp in ipairs(servers) do
   require('lspconfig')[lsp].setup {
     -- You will probably want to add a custom on_attach here to locally map keybinds to buffers with an active client
@@ -60,6 +60,10 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
   }
 end
+
+require'lspconfig'.volar.setup{
+  filetypes = {'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json'}
+}
 
 require'lspconfig'.groovyls.setup{
     -- Unix
