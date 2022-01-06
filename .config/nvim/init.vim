@@ -42,9 +42,7 @@ Plug 'puremourning/vimspector'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'hrsh7th/nvim-compe'
 Plug 'L3MON4D3/LuaSnip'
-Plug 'tyru/caw.vim'
-Plug 'Shougo/context_filetype.vim'
-
+Plug 'numToStr/Comment.nvim'
 
 " Other
 Plug 'sheerun/vim-polyglot'
@@ -72,6 +70,8 @@ Plug 'nvim-treesitter/playground'
 
 call plug#end()
 
+
+lua require('Comment').setup()
 
 set completeopt=menuone,noselect
 
