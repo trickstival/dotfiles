@@ -18,9 +18,11 @@ Plug 'nvim-lua/plenary.nvim'
 " telescope requirements...
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 Plug 'colepeters/spacemacs-theme.vim'
+Plug 'nvim-telescope/telescope.nvim'
 
 
 Plug 'morhetz/gruvbox'
@@ -52,11 +54,11 @@ Plug 'posva/vim-vue'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'editorconfig/editorconfig-vim'
 Plug 'xolox/vim-session'
 Plug 'xolox/vim-misc'
 Plug 'szw/vim-maximizer'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-sleuth'
 
 " Plebvim lsp Plugins
 Plug 'neovim/nvim-lspconfig'
@@ -133,12 +135,6 @@ nnoremap <leader>a :e #<CR>
 nnoremap <leader>n :call MyNerdToggle()<CR>
 nnoremap <leader>sv :source ~/.config/nvim/init.vim<cr>
 
-" Macro in multiple lines: commend, uncomment and generic macro
-vnoremap <leader>qc :normal s/^\(\s*\)/\1\/\/ <cr>
-vnoremap <leader>qu :normal s/^\(\s*\)\/\/\s/\1<cr>
-vnoremap <leader>qq :normal @q<cr>
-
-" Comment in vue files
 let NERDSpaceDelims=1
 
 if (has('nvim'))
@@ -174,5 +170,4 @@ augroup myCmds
 au!
 autocmd VimEnter * silent !echo -ne "\e[2 q"
 augroup END
-
 
